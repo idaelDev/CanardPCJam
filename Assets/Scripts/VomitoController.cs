@@ -8,7 +8,11 @@ public class VomitoController : MonoBehaviour {
     public float maxPower = 100f;
     public float powerSpeed = 10f;
     private ParticleGenerator pg;
-    public float power;
+    private float power;
+    public float rotateSpeed = 5f;
+    public float maxAngle = 90f;
+    public float minAngle = -90f;
+    public float currentAngle = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +23,17 @@ public class VomitoController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        float v = Input.GetAxis("Vertical");
+        float angle = v * rotateSpeed * Time.deltaTime;
+
+        if (currentAngle + angle > maxAngle)
+            angle = 0;
+        if (currentAngle + angle < minAngle)
+            angle = 0;
+
+        currentAngle += angle;
+        transform.Rotate(transform.forward, angle);
+
         if (Input.GetButton("Fire1"))
         {
 
@@ -28,11 +43,11 @@ public class VomitoController : MonoBehaviour {
                 power = maxPower;
 
             pg.enabled = true;
-            
+
             if (p2D.FacingRight)
-                pg.particleForce = new Vector3(power, power, 0f);
+                pg.particleForce = transform.right * power;
             else
-                pg.particleForce = new Vector3(-power, power, 0f);
+                pg.particleForce = -transform.right * power;
         }
         else
         {
